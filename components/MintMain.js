@@ -23,10 +23,11 @@ const style = {
   currencySelectorTicker: `mx-2`,
   currencySelectorArrow: `text-lg`,
   mintButton: `bg-[#2172E5] my-2 rounded-2xl py-6 px-8 text-xl font-semibold flex items-center justify-center cursor-pointer border border-[#2172E5] hover:border-[#234169]`,
+  mintButtonDisabled: `bg-[#4c4954] my-2 rounded-2xl py-6 px-8 text-xl font-semibold flex items-center justify-center cursor-not-allowed border border-[#2172E5]]`,
 }
 
 const MintMain = () => {
-  const {connectWallet, currentAccount} = useContext(TransactionContext)
+  const {connectWallet, currentAccount, currentAccountWhitelisted} = useContext(TransactionContext)
   return (
     <div className={style.wrapper}>
       <Toaster position='top-center' reverseOrder={false}/>
@@ -37,12 +38,10 @@ const MintMain = () => {
           </div> */}
           <div className={style.mintContainer}>
             <div className={style.mintHeader}>
-              Mint NFT
+              { currentAccount ? (currentAccountWhitelisted ? ('You are whitelisted to mint') : ('NOT Whitelisted')) : ('Must connect wallet before proceeding')}
             </div>
-            <div className={style.mintButton}>
-              {currentAccount ? 
-                ('Mint') : ('Connect Wallet')
-              }
+            <div className={`${currentAccount && currentAccountWhitelisted ? style.mintButton : style.mintButtonDisabled}`}>
+              {currentAccount ? (currentAccountWhitelisted ? ('Mint') : ('<disabled>')) : ('Connect Wallet')}
             </div>
           </div>
 
