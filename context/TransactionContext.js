@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Web3 from 'web3'
 import { client } from '../lib/sanityClient'
+import { contractABI, contractAddress } from '../lib/constants'
+import { ethers } from 'ethers'
 
 export const TransactionContext = React.createContext()
 
@@ -10,10 +12,21 @@ if (typeof window !== 'undefined') {
   eth = window.ethereum
 }
 
+const getEthereumContract = () => {
+  const provider = new ethers.providers.Web3Provider(eth)
+  const signer = provider.getSigner()
+  const transactionContract = new ethers.Contract(
+    contractAddress,
+    contractABI,
+    signer
+  )
+  return transactionContract
+}
 
 export const TransactionProvider = ({children}) => {
   const [currentAccount, setCurrentAccount] = useState()
   const [currentAccountWhitelisted, setCurrentAccountWhitelisted] = useState()
+  const [currentSignature, setCurrentSignature] = useState()
   const [formData, setFormData] = useState({whitelistAddress: ''})
 
   useEffect(() => {
@@ -30,9 +43,10 @@ export const TransactionProvider = ({children}) => {
     try {
       if (!metamask) return alert('please install metamask')
       const accounts = await metamask.request({method: 'eth_requestAccounts'})
-      setCurrentAccount(accounts[0])
-      setCurrentAccountWhitelisted(isAddressWhitelisted(accounts[0]))
-      console.log("currentAccountWhitelisted", currentAccountWhitelisted)
+      if (accounts.length > 0) {
+        setCurrentAccount(accounts[0])
+        updateAccountInfoFromDB(accounts[0])
+      }
     } catch (error) {
       console.error(error)
       throw new Error('No ethereum object')
@@ -45,10 +59,7 @@ export const TransactionProvider = ({children}) => {
       const accounts = await metamask.request({method: 'eth_accounts'})
       console.log('checkIfWalletIsConnected:  ' + accounts[0])
       setCurrentAccount(accounts[0])
-      console.log(isAddressWhitelisted)
-      isAddressWhitelisted(accounts[0]).then(isWhitelisted => {
-        setCurrentAccountWhitelisted(isWhitelisted)
-      })
+      updateAccountInfoFromDB(accounts[0])
       //(isAddressWhitelisted(accounts[0]))
       //console.log("currentAccountWhitelisted", currentAccountWhitelisted)
 
@@ -63,19 +74,21 @@ export const TransactionProvider = ({children}) => {
   }
 
 
-  const isAddressWhitelisted = async (address) => {
-  //const isAddressWhitelisted = new Promise((resolve, reject) => {
+  const updateAccountInfoFromDB = async (address) => {
     if (!address) return false
     const whitelistAddress = address.toLowerCase()
     const query = `*[_type == "signatures" && whitelistAddress == $whitelistAddress]`
     const params = {whitelistAddress: whitelistAddress}
     const records = await client.fetch(query, params)
+    setCurrentAccountWhitelisted(records.length > 0)
+    if (records.length > 0) {
+      setCurrentSignature(records[0].signature)
+    }
     console.log(query)
     console.log(params)
     console.log(records)
     console.log( records.length > 0)
-    //resolve(records.length > 0)
-    return (records.length > 0)
+    return true
   }
 
   const saveTransaction = async (
@@ -106,6 +119,24 @@ export const TransactionProvider = ({children}) => {
     await saveTransaction(whitelistAddress, hash, signature)
   }
 
+  const sendTransaction = async (
+    metamask = eth,
+    connectedAccount = currentAccount
+  ) => {
+    try {
+      if (!metamask) return alert('Please install metamask')
+      const transactionContract = getEthereumContract()
+      const salt = 99
+      const transactionHash = transactionContract.mintHiddenLabs(
+        salt, 
+        currentSignature
+      )
+      //await transactionHash.wait()
+    } catch (error) { 
+      console.log(error)
+    }
+  }
+
   return (
     <TransactionContext.Provider
       value={{
@@ -115,6 +146,7 @@ export const TransactionProvider = ({children}) => {
         signAddress,
         formData,
         currentAccountWhitelisted,
+        sendTransaction
       }}
     >
       {children}

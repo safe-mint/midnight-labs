@@ -27,7 +27,13 @@ const style = {
 }
 
 const MintMain = () => {
-  const {connectWallet, currentAccount, currentAccountWhitelisted} = useContext(TransactionContext)
+  const {connectWallet, currentAccount, currentAccountWhitelisted, sendTransaction} = useContext(TransactionContext)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    sendTransaction()
+  }
   return (
     <div className={style.wrapper}>
       <Toaster position='top-center' reverseOrder={false}/>
@@ -40,9 +46,10 @@ const MintMain = () => {
             <div className={style.mintHeader}>
               { currentAccount ? (currentAccountWhitelisted ? ('You are whitelisted to mint') : ('NOT Whitelisted')) : ('Must connect wallet before proceeding')}
             </div>
-            <div className={`${currentAccount && currentAccountWhitelisted ? style.mintButton : style.mintButtonDisabled}`}>
-              {currentAccount ? (currentAccountWhitelisted ? ('Mint') : ('<disabled>')) : ('Connect Wallet')}
-            </div>
+            {currentAccount && currentAccountWhitelisted ? 
+              <div className={style.mintButton} onClick={e => handleSubmit(e)}>Mint</div> : 
+              <div className={style.mintButtonDisabled}>{currentAccount ? '<disabled>' : 'Connect Wallet'}</div>
+            }
           </div>
 
         </div>
