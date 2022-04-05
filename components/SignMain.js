@@ -62,7 +62,8 @@ const SignMain = () => {
     e.preventDefault()
     if (!whitelistAddress.trim()) return
 
-    signAddress()
+    await signAddress()
+    successfulSignMessage()
   }
 
 
