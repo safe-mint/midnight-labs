@@ -3,9 +3,11 @@ import toast, { Toaster } from 'react-hot-toast'
 import midnightLabsGraphic from '../assets/midnight-labs-logo-paint.png'
 import Image from 'next/image'
 import { TransactionContext } from '../context/TransactionContext'
+import cssStyles from '../styles/MintMain.module.css'
 
 const style = {
-  wrapper: `w-screen flex items-center justify-center mt-14`,
+  //wrapper: `w-screen flex items-center justify-center`,
+  wrapper: ``,
   container: ``,
   contentWrapper: `flex relative justify-center flex-wrap items-center`,
   logoContainer: `w-1/2`,
@@ -26,6 +28,7 @@ const style = {
   mintButtonDisabled: `bg-[#4c4954] my-2 rounded-2xl py-6 px-8 text-xl font-semibold flex items-center justify-center cursor-not-allowed border border-[#2172E5]]`,
 }
 
+
 const MintMain = () => {
   const {connectWallet, currentAccount, currentAccountWhitelisted, sendTransaction} = useContext(TransactionContext)
 
@@ -34,14 +37,43 @@ const MintMain = () => {
 
     sendTransaction()
   }
+
+  const renderNotConnectedContainer = () => (
+    <button onClick={() => connectWallet()} className={`${cssStyles.ctaButton} ${cssStyles.connectWalletButton}`}>
+      Connect to Wallet
+    </button>
+  );
+
+  const renderMintUI = () => (
+    <button onClick={() => sendTransaction()} className={`${cssStyles.ctaButton} ${cssStyles.mintButton}`}>
+      Mint NFT
+    </button>
+  )
   return (
-    <div className={style.wrapper}>
-      <Toaster position='top-center' reverseOrder={false}/>
-      <div className={style.container}>
+    <div className={cssStyles.app}>
+      {/* <Toaster position='top-center' reverseOrder={false}/> */}
+      <div className={cssStyles.container}>
+        <div className={cssStyles.headerContainer}>
+          <p className={cssStyles.header}>Midnight Labs</p>
+          <p className={cssStyles.subText}>Each unique. Each inspiring.</p>
+          <p className={cssStyles.subText}>3/50 NFTs minted. Discover your NFT today.</p>
+          {!currentAccount ? renderNotConnectedContainer() : renderMintUI()}
+        </div>
+        <div className={cssStyles.footerContainer}></div>
+        <div className={cssStyles.circle1}></div>
+        <div className={cssStyles.circle2}></div>
+        <div className={`${cssStyles.wave} ${cssStyles.wave1}`}></div>
+        <div className={`${cssStyles.wave} ${cssStyles.wave2}`}></div>
+        {/* put little guy on wave3 */}
+        <div className={`${cssStyles.wave} ${cssStyles.wave3}`}></div>
+        <div className={`${cssStyles.wave} ${cssStyles.wave4}`}></div>
+
+
         <div className={style.contentWrapper}>
           {/* <div className={style.logoContainer}>
             <Image src={midnightLabsGraphic} alt="midnight labs" height={200} width={100}/>
           </div> */}
+          <div className={style.mintBox}></div>
           <div className={style.mintContainer}>
             <div className={style.mintHeader}>
               { currentAccount ? (currentAccountWhitelisted ? ('You are whitelisted to mint') : ('NOT Whitelisted')) : ('Must connect wallet before proceeding')}
