@@ -4,6 +4,7 @@ import midnightLabsGraphic from '../assets/midnight-labs-logo-paint.png'
 import Image from 'next/image'
 import { TransactionContext } from '../context/TransactionContext'
 import cssStyles from '../styles/MintMain.module.css'
+import { contractAddress } from '../lib/constants'
 
 const style = {
   //wrapper: `w-screen flex items-center justify-center`,
@@ -40,7 +41,7 @@ const MintMain = () => {
 
   const renderNotConnectedContainer = () => (
     <button onClick={() => connectWallet()} className={`${cssStyles.ctaButton} ${cssStyles.connectWalletButton}`}>
-      Connect to Wallet
+      Connect Wallet
     </button>
   );
 
@@ -49,17 +50,24 @@ const MintMain = () => {
       Mint NFT
     </button>
   )
+
   return (
     <div className={cssStyles.app}>
       {/* <Toaster position='top-center' reverseOrder={false}/> */}
       <div className={cssStyles.container}>
         <div className={cssStyles.headerContainer}>
           <p className={cssStyles.header}>Midnight Labs</p>
-          <p className={cssStyles.subText}>Each unique. Each inspiring.</p>
-          <p className={cssStyles.subText}>3/50 NFTs minted. Discover your NFT today.</p>
+          <p className={cssStyles.subText}>MINT YOUR NFT</p>
+          <p className={cssStyles.smallerSubText}>Only whitelisted members can mint.  <a href="/">Go here</a> to apply.</p>
           {!currentAccount ? renderNotConnectedContainer() : renderMintUI()}
+
+          <div className="flex relative justify-center flex-wrap items-center">
+          {currentAccount ? <p>Connected as {currentAccount.slice(0, 6)}...{currentAccount.slice(38)}</p> : ''}
+          </div> 
         </div>
-        <div className={cssStyles.footerContainer}></div>
+        <div className={cssStyles.footerContainer}>
+          <p>Contract ID: {contractAddress.slice(0, 7)}...{contractAddress.slice(36)}</p>
+        </div>
         <div className={cssStyles.circle1}></div>
         <div className={cssStyles.circle2}></div>
         <div className={`${cssStyles.wave} ${cssStyles.wave1}`}></div>
@@ -69,10 +77,7 @@ const MintMain = () => {
         <div className={`${cssStyles.wave} ${cssStyles.wave4}`}></div>
 
 
-        <div className={style.contentWrapper}>
-          {/* <div className={style.logoContainer}>
-            <Image src={midnightLabsGraphic} alt="midnight labs" height={200} width={100}/>
-          </div> */}
+        {/* <div className={style.contentWrapper}>
           <div className={style.mintBox}></div>
           <div className={style.mintContainer}>
             <div className={style.mintHeader}>
@@ -84,7 +89,7 @@ const MintMain = () => {
             }
           </div>
 
-        </div>
+        </div> */}
 
       </div>
     </div>

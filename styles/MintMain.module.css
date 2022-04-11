@@ -19,8 +19,8 @@
 .headerContainer {
   padding-top: 30px;
   background: white;
-  min-height: 70vh;
-  width: 60%;
+  min-height: 60vh;
+  width: 35%;
   background: linear-gradient( to right bottom, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.2));
   border-radius: 2rem;
   -webkit-border-radius: 2rem;
@@ -49,7 +49,7 @@
 
 .circle1 {
   top: 5%;
-  left: 10%;
+  left: 15%;
 }
 
 .circle2 {
@@ -129,7 +129,15 @@
 }
 
 .subText {
+  margin-top: 20px;
   font-size: 25px;
+  color: #000000;
+}
+
+
+.smallerSubText {
+  margin-top: 20px;
+  font-size: 15px;
   color: #000000;
 }
 
@@ -146,6 +154,7 @@
   width: auto;
   padding-left: 40px;
   padding-right: 40px;
+  margin-top: 40px;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
